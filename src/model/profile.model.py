@@ -18,10 +18,11 @@ class TeacherSchema(BaseModel):
 
 
 
-class StudentModel(BaseModel):
+class StudentSchema(BaseModel):
     name: str
     clg_roll: str = Field(..., unique=True)  
     uni_roll: str = Field(..., unique=True)  
+    dob: datetime
     father_name: str
     mother_name: str
     course: str
@@ -31,7 +32,7 @@ class StudentModel(BaseModel):
     email_id: str   
     addhaar_id: int = Field(..., unique=True)
     address: Optional[str] = None
-    dob: datetime
+    subjects : Optional[List[str]] = None
     last_update :datetime = Field(default_factory = datetime.utcnow)
 
 
