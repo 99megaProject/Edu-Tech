@@ -8,7 +8,7 @@ MONGO_URI = os.getenv("MONGODB_URI")
 DB_NAME = os.getenv("DB_NAME")
 
 
-def db_connection():
+def init_db():
    try:
     client = MongoClient(MONGO_URI)
     db = client[DB_NAME]
@@ -18,3 +18,8 @@ def db_connection():
     print('Could not connect to MongoDB')
     return None
 
+
+def get_collection(collection_name: str):
+    
+    db = init_db()
+    return db[collection_name]

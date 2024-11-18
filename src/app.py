@@ -1,16 +1,19 @@
 from dotenv import load_dotenv
-from db_connection import db_connection
+from src.db_connection import init_db,get_collection
 from fastapi import FastAPI
+from route.profile_teacher_route import router
 
 # Load environment variables from .env file
 load_dotenv()
 app = FastAPI()
 
-if __name__ == '__main__':
-    db_connection()
+# Initialize MongoDB client at app startup
+@app.on_event("startup")
+async def startup_event():
+    init_db()
 
 
-@app.get('/')
-def hello():
-    return "hello world"
-
+app.include_router(router)
+@app.get("/")
+def root():
+    return {"message": "API is running"}
