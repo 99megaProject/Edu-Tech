@@ -1,7 +1,13 @@
 from dotenv import load_dotenv
 from src.db_connection import init_db,get_collection
-from fastapi import FastAPI
-from route.profile_teacher_route import router
+from fastapi import FastAPI, File, UploadFile
+import shutil
+from typing import Optional
+import os
+
+from src.route.profile_teacher_route import router as teacher_router
+from src.route.profile_student_route import router as student_router
+from src.route.profile_admin_route import router as admin_router
 
 # Load environment variables from .env file
 load_dotenv()
@@ -13,7 +19,11 @@ async def startup_event():
     init_db()
 
 
-app.include_router(router)
+app.include_router(teacher_router)
+app.include_router(student_router)
+app.include_router(admin_router)
 @app.get("/")
 def root():
     return {"message": "API is running"}
+
+
