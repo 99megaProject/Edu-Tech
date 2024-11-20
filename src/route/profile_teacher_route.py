@@ -8,6 +8,7 @@ from ..db_connection import get_collection
 from ..utils.img_upload import upload_img_to_cloudinary
 from ..utils.random_generate import get_random_string 
 from ..utils.send_email import send_email
+from ..model.dashboard_teacher_model import TeacherDashboard
 
 
 collection = get_collection("profile_teachers")
@@ -63,6 +64,21 @@ async def register_teacher(
         result = collection.insert_one(teacher)
 
         if not result.acknowledged:
+            raise HTTPException(status_code=500, detail="Failed to register teacher")
+        
+        # Creating and adding data into another collection
+        dashboard_colle = get_collection("dashboard_teachers")
+
+        dash_data = {
+            "username": teacher['username'],
+            "name": name,
+        }
+
+        instance = TeacherDashboard(**dash_data)
+        dash_res = dashboard_colle.insert_one(instance.dict())
+
+        if not dash_res.acknowledged:
+            collection.delete_one({'username': teacher['username']})
             raise HTTPException(status_code=500, detail="Failed to register teacher")
 
         send_email(email,'Teacher registration successfully', f"Your username is {teacher['username']} and password is {teacher['password']}")

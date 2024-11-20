@@ -8,7 +8,7 @@ from ..db_connection import get_collection
 from ..utils.img_upload import upload_img_to_cloudinary
 from ..utils.random_generate import get_random_string 
 from ..utils.send_email import send_email
-
+from ..model.dashboard_student_model import StudentDashboard
 
 collection = get_collection("profile_students")
 
@@ -74,6 +74,25 @@ async def register_teacher(
 
         if not result.acknowledged:
             raise HTTPException(status_code=500, detail="Failed to register student")
+
+
+        # Creating and adding data into another collection
+        dashboard_colle = get_collection("dashboard_students")
+
+        dash_data = {
+            "clg_roll": clg_roll,
+            "name": name,
+            "subjects" : subjects,
+            "course":course,
+            "year":year
+        }
+
+        instance = StudentDashboard(**dash_data)
+        dash_res = dashboard_colle.insert_one(instance.dict())
+
+        if not dash_res.acknowledged:
+            dashboard_colle.delete_one({'clg_roll': clg_roll})
+            raise HTTPException(status_code=500, detail="Failed to register teacher")
 
         send_email(email,'Student registration successfully', f"Your college roll no is {student['clg_roll']} and password is {student['password']}")
 
