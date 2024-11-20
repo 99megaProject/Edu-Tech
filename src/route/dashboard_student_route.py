@@ -1,9 +1,4 @@
 from fastapi import APIRouter, HTTPException
-from bson.json_util import dumps
-from datetime import date, datetime
-import os
-import shutil
-
 
 from ..utils.generate_ai import generate_content
 # from ..db_connection import get_collection

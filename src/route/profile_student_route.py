@@ -64,7 +64,8 @@ async def register_teacher(
             'mother_name': mother_name,
             'course': course,
             'year': year,
-            'subjects' : subjects
+            'subjects' : subjects,
+            'avatar': avatar
         }
 
         student['password'] = get_random_string()
